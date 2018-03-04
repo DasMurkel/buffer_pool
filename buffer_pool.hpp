@@ -2,10 +2,6 @@
 #include <algorithm>
 #include <vector>
 
-using std::rbegin;
-using std::rend;
-using std::end;
-
 template <class SPAN>
 struct buffer_pool
 {
@@ -77,7 +73,10 @@ struct buffer_pool
         assert(size < m_memory.size());
         pointer_t begin = nullptr;
 
-        auto rit = std::find_if(rbegin(m_chunks), rend(m_chunks), [&](auto c) {
+        // Search from the back of the vector to create kind of a
+        // fragmented stack and try to keep the reorganizing of the
+        // vector to a minimum as opposed to erasing/inserting at the front.
+        auto rit = std::find_if(std::rbegin(m_chunks), std::rend(m_chunks), [&](auto c) {
             return !c.m_inUse && this->size(c) >= size;
         });
 
@@ -103,6 +102,19 @@ struct buffer_pool
         return Chunk(begin, size, *this);
     }
 
+    size_t used_mem() const
+    {
+        return std::accumulate(begin(m_chunks), end(m_chunks), size_t(0),
+                               [this](const auto &a, const auto &b) {
+                                   return a + (b.m_inUse ? this->size(b) : 0);
+                               });
+    }
+
+    size_t free_mem() const { return size() - used_mem(); }
+
+    size_t size() const { return m_memory.size(); }
+
+private:
     size_t size(const mgm_chunk &c) const
     {
         const auto it =
@@ -119,17 +131,6 @@ struct buffer_pool
             return 0;
     }
 
-    size_t used_mem() const
-    {
-        return std::accumulate(begin(m_chunks), end(m_chunks), size_t(0),
-                               [this](const auto &a, const auto &b) {
-                                   return a + (b.m_inUse ? this->size(b) : 0);
-                               });
-    }
-
-    size_t free_mem() const { return size() - used_mem(); }
-    size_t size() const { return m_memory.size(); }
-private:
     void release(const Chunk &chunk)
     {
         auto it = std::find_if(begin(m_chunks), end(m_chunks),
