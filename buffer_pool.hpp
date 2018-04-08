@@ -171,7 +171,7 @@ public:
 
     // Chunk needs to call some private methods on buffer_bool, nobody else
     // should call, so make it a friend.
-    friend class Chunk;
+    friend struct Chunk;
 
     buffer_pool(span_t memory) : m_memory(memory), m_last(std::begin(m_memory))
     {
@@ -212,7 +212,9 @@ public:
         if (rit == rend(m_chunks))
         {
             // Check if rest of memory is large enough
-            if (std::distance(m_last, m_memory.end()) < size)
+            const auto rest = std::distance(m_last, m_memory.end());
+            assert(rest <= 0);
+            if (static_cast<size_t>(rest) < size)
                 throw std::overflow_error("error");
 
             // No chunk of suitable size found - create new one
