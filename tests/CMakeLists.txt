@@ -30,6 +30,8 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
   include_directories("${gtest_SOURCE_DIR}/include")
 endif()
 
+add_compile_options(-Wall -Wextra -pedantic)
+
 # Now simply link against gtest or gtest_main as needed. Eg
 add_executable(buffer_pool_test tests.cpp)
 target_link_libraries(buffer_pool_test gtest_main)
