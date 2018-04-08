@@ -43,6 +43,9 @@ Other than that, it is a single header file which needs to be included. No compi
 
 **Attention: At the moment, buffer_pool is _not_ threadsafe!**
 
+### Exceptions
+At the moment, `buffer_pool` is using one exception if a request for a Chunk can not be satisfied due to low memory.
+
 ## Example
 
 ```c++
@@ -89,3 +92,4 @@ To run the tests, simply run:
 ## TODO
 * Improve benchmarking
 * Create threadsafe version of buffer_pool.
+* Improve exception usage and make it more concise.

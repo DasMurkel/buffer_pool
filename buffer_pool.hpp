@@ -194,6 +194,8 @@ public:
      * @param size The size of the requested Chunk. Must be smaller than the
      * size of the buffer_pool. If no Chunk of a suitable size can be found,
      * an exception is thrown.
+     * @throw std::overflow_error Not enough continuous memory left in
+     * buffer_pool to satisfy request.
      * @return A Chunk which manages the memory of the requested size.
      *
      */
@@ -215,7 +217,7 @@ public:
             const auto rest = std::distance(m_last, m_memory.end());
             assert(rest >= 0);
             if (static_cast<size_t>(rest) < size)
-                throw std::overflow_error("error");
+                throw std::overflow_error("out of memory");
 
             // No chunk of suitable size found - create new one
             begin = m_last;
