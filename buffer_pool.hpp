@@ -104,29 +104,29 @@ public:
         span_t m_chunk;
 
         // A pointer to the buffer_pool which managed this Chunk.
-        buffer_pool *m_pool = nullptr;
+        buffer_pool* m_pool = nullptr;
 
         Chunk() = default;
 
-        Chunk(pointer_t begin, size_t size, buffer_pool &pool)
+        Chunk(pointer_t begin, size_t size, buffer_pool& pool)
             : m_chunk(begin, size), m_pool(&pool)
         {
         }
 
         // Chunks can not be copied. If this is needed, move the Chunk into a
         // shared_ptr.
-        Chunk(Chunk &orig) = delete;
-        Chunk &operator=(const Chunk &orig) = delete;
+        Chunk(Chunk& orig) = delete;
+        Chunk& operator=(const Chunk& orig) = delete;
 
         // Chunks can be moved.
-        Chunk(Chunk &&orig)
+        Chunk(Chunk&& orig)
         {
             using std::swap;
             swap(orig.m_chunk, m_chunk);
             swap(orig.m_pool, m_pool);
         }
 
-        Chunk &operator=(Chunk &&orig)
+        Chunk& operator=(Chunk&& orig)
         {
             using std::swap;
             swap(orig.m_chunk, m_chunk);
@@ -177,12 +177,12 @@ public:
     }
 
     // Buffer_pools cannot be copied ...
-    buffer_pool(const buffer_pool &orig) = delete;
-    buffer_pool &operator=(const buffer_pool &orig) = delete;
+    buffer_pool(const buffer_pool& orig) = delete;
+    buffer_pool& operator=(const buffer_pool& orig) = delete;
 
     // ... or moved.
-    buffer_pool(buffer_pool &&other) = delete;
-    buffer_pool &operator=(buffer_pool &&other) = delete;
+    buffer_pool(buffer_pool&& other) = delete;
+    buffer_pool& operator=(buffer_pool&& other) = delete;
 
     /// All Chunks managed by this buffer_pool *must* have been
     /// released/destroyed before destroying the pool!
@@ -238,7 +238,7 @@ public:
     size_t used_mem() const
     {
         return std::accumulate(begin(m_chunks), end(m_chunks), size_t(0),
-                               [this](const auto &a, const auto &b) {
+                               [this](const auto& a, const auto& b) {
                                    return a + (b.m_inUse ? this->size(b) : 0);
                                });
     }
@@ -252,17 +252,17 @@ public:
     size_t used_chunks()
     {
         return std::count_if(begin(m_chunks), end(m_chunks),
-                             [](const auto &c) { return c.m_inUse; });
+                             [](const auto& c) { return c.m_inUse; });
     }
 
     size_t unused_chunks()
     {
         return std::count_if(begin(m_chunks), end(m_chunks),
-                             [](const auto &c) { return !c.m_inUse; });
+                             [](const auto& c) { return !c.m_inUse; });
     }
 
 private:
-    size_t size(const mgm_chunk &c) const
+    size_t size(const mgm_chunk& c) const
     {
         const auto it =
             std::find_if(begin(m_chunks), end(m_chunks),
@@ -275,15 +275,15 @@ private:
                                   : std::distance(c.m_first, m_last);
     }
 
-    typename chunkVec_t::iterator find_chunk(const Chunk &chunk)
+    typename chunkVec_t::iterator find_chunk(const Chunk& chunk)
     {
         return std::find_if(begin(m_chunks), end(m_chunks),
-                            [&](const mgm_chunk &c) {
+                            [&](const mgm_chunk& c) {
                                 return c.m_first == chunk.m_chunk.data();
                             });
     }
 
-    void release(const Chunk &chunk)
+    void release(const Chunk& chunk)
     {
         auto it = find_chunk(chunk);
         assert(it != end(m_chunks));
@@ -310,7 +310,7 @@ private:
         }
     }
 
-    void resize(const Chunk &chunk)
+    void resize(const Chunk& chunk)
     {
         const auto it = find_chunk(chunk);
         assert(it != end(m_chunks));
