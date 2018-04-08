@@ -9,11 +9,11 @@
 
 class buffer_pool_test : public ::testing::Test
 {
-   public:
+public:
     buffer_pool_test() : m_span(m_memory, sizeof(m_memory)), m_pool(m_span) {}
     using span_t = gsl::span<uint8_t>;
 
-   protected:
+protected:
     uint8_t m_memory[1024] = {0};
     span_t m_span;
 
