@@ -235,6 +235,10 @@ public:
         return Chunk(begin, size, *this);
     }
 
+    /**
+     * @brief used_mem Calculates the amount of used memory in the buffer_pool.
+     * @return The amount of memory used in Chunks.
+     */
     size_t used_mem() const
     {
         return std::accumulate(begin(m_chunks), end(m_chunks), size_t(0),
@@ -243,18 +247,40 @@ public:
                                });
     }
 
+    /**
+     * @brief free_mem Calculates the remaining free memory in the buffer_pool.
+     * @return The amount of free memory in the buffer_pool. Not continuous.
+     */
     size_t free_mem() const { return size() - used_mem(); }
 
+    /**
+     * @brief size The size of the memory assigned to the buffer_bool.
+     * @return The size in bytes.
+     */
     size_t size() const { return m_memory.size(); }
 
+    /**
+     * @brief num_chunks Used for testing and statistical purposes.
+     * @return The number of mgm_chunks managed by the buffer_pool.
+     */
     size_t num_chunks() const { return m_chunks.size(); }
 
+    /**
+     * @brief used_chunks Calculates the number of assigned mgm_chunks.
+     * @return The number of used mgm_chunks.
+     * Must be equal to the number of active Chunks.
+     */
     size_t used_chunks()
     {
         return std::count_if(begin(m_chunks), end(m_chunks),
                              [](const auto& c) { return c.m_inUse; });
     }
 
+    /**
+     * @brief unused_chunks Calculates the number of unused mgm_chunks.
+     * Can be used for tests and for measuring fragmentation.
+     * @return The number of unused mgm_chunks.
+     */
     size_t unused_chunks()
     {
         return std::count_if(begin(m_chunks), end(m_chunks),
