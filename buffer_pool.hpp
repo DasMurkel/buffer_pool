@@ -131,6 +131,7 @@ public:
             using std::swap;
             swap(orig.m_chunk, m_chunk);
             swap(orig.m_pool, m_pool);
+            return *this;
         }
 
         ~Chunk() { release(); }
