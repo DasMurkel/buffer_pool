@@ -213,7 +213,7 @@ public:
         {
             // Check if rest of memory is large enough
             const auto rest = std::distance(m_last, m_memory.end());
-            assert(rest <= 0);
+            assert(rest >= 0);
             if (static_cast<size_t>(rest) < size)
                 throw std::overflow_error("error");
 
